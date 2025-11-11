@@ -13,6 +13,7 @@
 ## Chat minimizado 
 
 ### Default
+<img width="366" height="150" alt="image" src="https://github.com/user-attachments/assets/5186c418-ee90-4fa8-ade2-fef28cb1540b" />
 <img width="366" height="150" alt="image" src="https://github.com/user-attachments/assets/4866b89e-ccc7-49d3-bea7-4065d1748140" />
 
 ### Ícone do chat minimizado 
