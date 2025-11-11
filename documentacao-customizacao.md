@@ -834,7 +834,7 @@ Resultado:
 
 ### Default
 
-<img width="708" height="266" alt="image" src="https://github.com/user-attachments/assets/d44c7a8f-9b1f-48c7-98e5-4782e11a88ac" />
+<img width="808" height="302" alt="image" src="https://github.com/user-attachments/assets/fc2b4661-400f-461f-b224-8899b5674191" />
 
 ### Cor do texto do título
 
@@ -851,7 +851,7 @@ ThemeManager.setDefaultTheme({
 
 Resultado:
 
-<img width="773" height="245" alt="image" src="https://github.com/user-attachments/assets/07273e5a-791d-4c4d-b66b-1b32a623c09d" />
+<img width="708" height="266" alt="image" src="https://github.com/user-attachments/assets/39f6c0c2-d9bf-482c-ba36-eb0ef314a407" />
 
 ### Fonte do texto do título
 Código:  
@@ -868,7 +868,7 @@ Código:
 
 Resultado:   
 
-<img width="773" height="245" alt="image" src="https://github.com/user-attachments/assets/811c9f28-c5cd-49e4-9888-48c4eb09fc47" />
+<img width="773" height="245" alt="image" src="https://github.com/user-attachments/assets/90e23f76-6be0-42de-b449-e052f72496d1" />
 
 ### Ícone do título a esquerda do texto (imagem de 24x24px)
 
@@ -884,7 +884,7 @@ Código:
 ```
 Resultado:
 
-<img width="242" height="87" alt="image" src="https://github.com/user-attachments/assets/24840e59-14fc-494b-9750-e08f9714dcfa" />
+<img width="242" height="87" alt="image" src="https://github.com/user-attachments/assets/d8b9d59e-3491-4b9a-9eb5-5fcb44ea3bd5" />
 
 ### Cor da barra de título
 
