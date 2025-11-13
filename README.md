@@ -1164,7 +1164,7 @@ Resultado:
 
 
 --- 
-<a id="navegacao-de-videos-e-textos"></a>
+<a id="navegacao"></a>
 # Documentação — Navegação de Vídeo e Texto (videoNavigation / textNavigation)
 
 Quando a IA identifica um conteúdo relevante dentro de um **vídeo** ou **documento PDF**, ela pode retornar o ponto exato onde aquele conteúdo aparece.  
