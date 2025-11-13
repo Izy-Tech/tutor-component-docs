@@ -1,6 +1,19 @@
-# Documentação Customização
+# Documentação Componente
 
+## Essa documentação aborda como customizar o componente e seus callbacks.
+
+[Ir para Customização](#customizacao)
+
+[Ir para Navegação de vídeos e textos](#navegacao)
+
+[Ir para Enviar momento atual](#getcurrentcontent)
+
+--- 
+
+# Documentação Customização
+<a id="customizacao"></a>
 ## 📦 Importando o ThemeManager (Obrigatório)
+
 
 Para utilizar o `ThemeManager`, é necessário importar o módulo dentro da sua aplicação.
 
@@ -1148,3 +1161,271 @@ Código não mostrar:
 Resultado:  
 
 <img width="786" height="336" alt="image" src="https://github.com/user-attachments/assets/a1d60a74-5092-4031-af97-28d714462337" />
+
+
+--- 
+<a id="navegacao"></a>
+# Documentação — Navegação de Vídeo e Texto (videoNavigation / textNavigation)
+
+Quando a IA identifica um conteúdo relevante dentro de um **vídeo** ou **documento PDF**, ela pode retornar o ponto exato onde aquele conteúdo aparece.  
+Para isso, você deve implementar dois callbacks: **onVideoDocumentNavigation** e **onTextDocumentNavigation**.
+
+Essas funções recebem um objeto contendo informações sobre o conteúdo indexado e devem redirecionar o usuário para o material correspondente no player do produtor.
+
+---
+
+## Navegação em Vídeos (`videoNavigation`)
+
+Quando a IA entende que a resposta do usuário está relacionada a um trecho específico de um vídeo (ex.: “O conceito SOLID é explicado no minuto 2 do vídeo X”), ela dispara o callback:
+
+```js
+onVideoDocumentNavigation: (currentVideo) => this.videoNavigation(currentVideo)
+```
+
+O método recebe:
+
+```ts
+{
+  id: string,
+  name?: string,
+  friendlyUrl?: string,
+  startTime: number // em milissegundos
+}
+```
+
+### O que o implementador do componente deve fazer (exemplo c# com Blazor)?
+
+```c#
+videoNavigation(currentVideo) {
+    const productId = this.tutorChat?.options?.productId;
+
+    const url = new URL(window.location.href);
+    url.hash = '';
+    url.pathname = `/products/${productId}/members`;
+    url.search = '';
+
+    url.searchParams.set('documentId', currentVideo.id);
+    url.searchParams.set('position', Math.round(currentVideo.startTime ?? 0));
+
+    this.blazorCallback.invokeMethodAsync('NavigateTo', url.toString(), true);
+}
+```
+
+### Explicação
+
+1. **Constrói uma URL para o player da plataforma**  
+   - `/products/{productId}/members`
+2. **Adiciona o ID do vídeo**  
+   - `documentId = currentVideo.id`
+3. **Marca o tempo do vídeo onde o conteúdo aparece**  
+   - `position = startTime`
+4. **Chama o Blazor** para executar a navegação real:  
+   - `NavigateTo(url, true)`
+
+### Resultado
+
+Quando o usuário clica no link sugerido pela IA, ele é **redirecionado para o vídeo exatamente no segundo certo** que contém o conteúdo mencionado.
+
+---
+
+## Navegação em Documentos (PDF) — `textNavigation`
+
+Quando o conteúdo relevante está em um material de texto (apostila, PDF, página 8, por exemplo), o callback é:
+
+```js
+onTextDocumentNavigation: (currentText) => this.textNavigation(currentText)
+```
+
+O objeto recebido:
+
+```ts
+{
+  id: string,
+  name?: string,
+  friendlyUrl?: string,
+  page: number
+}
+```
+
+### O que o implementador do componente deve fazer (exemplo c# com Blazor)?
+
+```js
+textNavigation(currentText) {
+    const productId = this.tutorChat?.options?.productId;
+
+    const url = new URL(window.location.href);
+    url.hash = '';
+    url.pathname = `/products/${productId}/members`;
+    url.search = '';
+
+    url.searchParams.set('documentId', currentText.id);
+    url.searchParams.set('position', currentText.page ?? 0);
+
+    this.blazorCallback.invokeMethodAsync('NavigateTo', url.toString(), true);
+}
+```
+
+### Explicação
+
+1. Constrói a URL do player  
+2. Usa o ID do documento PDF  
+3. Define a página onde o tema aparece  
+4. Aciona o Blazor para navegar
+
+### Resultado
+
+O usuário é direcionado **para exatamente a página do documento mencionada pela IA**.
+
+---
+
+## Como o clique dispara a navegação
+
+Dentro do componente, quando o usuário clica em um item sugerido pela IA, este método é chamado:
+
+```js
+private async videoDocumentClick(event) {
+  if (!this.options.onVideoDocumentNavigation) return;
+
+  const target = event.currentTarget;
+  if (!target) return;
+
+  const dataset = target.dataset;
+
+  await this.options.onVideoDocumentNavigation({
+    name: dataset.name,
+    friendlyUrl: dataset.friendlyUrl,
+    id: dataset.id,
+    startTime: dataset.startTime
+  });
+}
+```
+
+O mesmo ocorre para PDF (textNavigation).
+
+## Resumo
+
+- A IA monitora o conteúdo do curso (vídeos + PDFs)
+- Quando identifica uma parte relevante:
+  - Fornece um link para o trecho do vídeo **exato**
+  - Ou para a **página correta** do PDF
+- O Tutor dispara `onVideoDocumentNavigation` ou `onTextDocumentNavigation`
+- Você redireciona seu usuário usando o método exibido acima
+
+Isso permite que o aluno vá diretamente ao ponto que contém a explicação necessária — aumentando retenção e experiência.
+
+---
+<a id="getcurrentcontent"></a>
+# Como funciona o `getCurrentContent`
+
+O componente `<tutor-chat>` precisa saber **onde o aluno está atualmente no curso** para enviar essa informação ao backend da IA.  
+Com isso, a IA consegue responder de forma contextualizada (ex.: *"você está na página 3", "você está no minuto 12 do vídeo"*).
+
+Para isso existe a função callback:
+
+```ts
+getCurrentContent: () => Promise<CurrentContentResponse>
+```
+
+---
+
+## O que o chat espera receber?
+
+O componente sempre chamará `getCurrentContent()` antes de enviar uma mensagem para a IA.
+
+O retorno deve seguir a interface:
+
+```ts
+export type CurrentContentResponse = {
+  externalId: string;
+  position: number;
+}
+```
+
+### Significado dos campos
+
+| Campo | Descrição |
+|-------|-----------|
+| **externalId** | Identificador do conteúdo atual (vídeo, PDF, ...). |
+| **position** | Posição atual dentro do conteúdo. <br> Para **vídeos**, é o tempo em milissegundos. <br> Para **textos**, é o número da página atual. |
+
+---
+
+##  Exemplo real de retorno (do Blazor)
+
+```csharp
+[JSInvokable]
+public async Task<object> GetCurrentContent()
+{
+    if (_current?.DocumentFileType == "Text")
+    {
+        return new
+        {
+            documentId = _current?.ExternalId is not null ? _current?.ExternalId : _current?.Id.ToString(),
+            type = 1,
+            position = CurrentPage,
+            isExternalId = true
+        };
+    }
+    else
+    {
+        var currentVideoTime = await GetCurrentTimeAsync();
+        return new
+        {
+            documentId = _current?.ExternalId is not null ? _current?.ExternalId : _current?.Id.ToString(),
+            type = 0,
+            position = currentVideoTime,
+            isExternalId = _current?.ExternalId is not null
+        };
+    }
+}
+```
+
+---
+
+##  Como o chat converte isso internamente
+
+```ts
+return {
+  externalId: object.documentId,
+  position: object.position
+};
+```
+
+---
+
+## Como o cliente deve implementar o `getCurrentContent`
+
+### ✔ Exemplo para vídeo
+
+```js
+getCurrentContent: async () => {
+  return {
+    externalId: "video-aula-12",
+    position: player.currentTime * 1000
+  };
+}
+```
+
+### Exemplo para PDF/texto
+
+```js
+getCurrentContent: async () => {
+  return {
+    externalId: "pdf-capitulo-3",
+    position: pdfViewer.currentPage
+  };
+}
+```
+
+---
+
+## Resumo técnico
+
+- `getCurrentContent()` **é obrigatório**
+- Deve retornar `{ externalId, position }`
+- Para vídeos → posição em **milissegundos**
+- Para PDFs/textos → posição é a **página atual**
+
+---
+
+Fim.
