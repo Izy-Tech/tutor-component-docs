@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>&lt;my-element> Demo</title>
+  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="node_modules/lit/polyfill-support.js"></script>
+  <script type="module" src="dist/tutor-chat.js"></script>
+  <link href="https://fonts.cdnfonts.com/css/stencil-paper" rel="stylesheet">
+
+  <style>
+    .chat {
+      position: fixed;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+  <tutor-chat class="chat" id="tutor-chat"></tutor-chat>
+  <button id="default-theme-button">Tema Padrão</button>
+  <button id="dark-theme-button">Tema Escuro</button>
+  <button id="new-theme-button">Tema Novo</button>
+</body>
+
+<script type="module">
+  import { ThemeManager } from './dist/theme-manager.js';
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const tutorChat = document.getElementById('tutor-chat');
+
+    tutorChat.options = {
+      organizationId: "org-123",
+      productId: "prod-123",
+      getToken: getConsumerToken,
+      getCurrentContent: getCurrentContent,
+      startOpened: false,
+      onVideoDocumentNavigation: (v) => videoNavigation(v),
+      onTextDocumentNavigation: (t) => textNavigation(t)
+    };
+  });
+
+  function getCurrentContent() {
+    return {
+      externalId: 'csharp-intro-video',
+      position: 125000
+    };
+  }
+
+  function videoNavigation(currentVideo) {
+    const productId = tutorChat.options.productId;
+
+    const url = new URL(window.location.href);
+    url.pathname = `/products/${productId}/members`;
+
+    url.searchParams.set('documentId', currentVideo.id);
+    url.searchParams.set('position', Math.round(currentVideo.startTime || 0));
+
+    // Redireciona via Blazor (ou sua própria lógica)
+    blazorRef.invokeMethodAsync('NavigateTo', url.toString(), true);
+  }
+
+  function textNavigation(currentText) {
+    const productId = tutorChat.options.productId;
+
+    const url = new URL(window.location.href);
+    url.pathname = `/products/${productId}/members`;
+
+    url.searchParams.set('documentId', currentText.id);
+    url.searchParams.set('position', currentText.page || 0);
+
+    blazorRef.invokeMethodAsync('NavigateTo', url.toString(), true);
+  }
+
+  async function getConsumerToken() {
+    const tokenResponse = await fetch("/api/token").then(r => r.json());
+    return tokenResponse.access_token;
+  }
+</script>
+
+
+</html>
