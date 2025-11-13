@@ -1,0 +1,252 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>&lt;my-element> Demo</title>
+  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="node_modules/lit/polyfill-support.js"></script>
+  <script type="module" src="dist/tutor-chat.js"></script>
+  <link href="https://fonts.cdnfonts.com/css/stencil-paper" rel="stylesheet">
+
+  <style>
+    .chat {
+      position: fixed;
+      z-index: 9999;
+      margin-bottom: 10%;
+      margin-right: 10%;
+    }
+  </style>
+</head>
+
+<body>
+  <tutor-chat class="chat" id="tutor-chat"></tutor-chat>
+  <button id="default-theme-button">Tema Padrão</button>
+  <button id="dark-theme-button">Tema Escuro</button>
+</body>
+
+<script type="module">
+  import { ThemeManager } from './dist/theme-manager.js';
+
+  ThemeManager.setDefaultTheme({
+    closed: {
+      icon: `
+      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712009.png">
+    `,
+      tooltip: {
+        text: 'Abrir doc',
+        styles: {
+          fontFamily: '"Stencil Paper", sans-serif',
+          fontSize: '14px',
+          color: 'red',
+          backgroundColor: '#f0f4ff',
+          border: '1px solid #3B82F6',
+          padding: '6px 10px',
+          borderRadius: '6px'
+        }
+      },
+      styles: {
+        backgroundColor: '#3B82F6',
+        borderRadius: '50%',
+        width: '60px',
+        height: '60px'
+      }
+    },
+    avatars: {
+      ai: {
+        src: 'https://cdn-icons-png.flaticon.com/512/4712/4712027.png'
+      },
+      user: {
+        src: 'https://cdn-icons-png.flaticon.com/512/147/147144.png'
+      }
+    },
+    messages: {
+      default: {
+        ai: {
+          bubble: {
+            backgroundColor: 'red',
+            fontFamily: '"Stencil Paper", sans-serif',
+            fontSize: '14px',
+            color: '#000000'
+          }
+        },
+        user: {
+          bubble: {
+            backgroundColor: 'yellow',
+            fontFamily: '"Stencil Paper", sans-serif',
+            fontSize: '14px',
+            color: '#000000'
+          }
+        },
+        'ai-suggestions': {
+          bubble: {
+            fontFamily: '"Stencil Paper", sans-serif',
+            fontSize: '14px'
+          }
+        }
+      }
+    },
+    textInput: {
+      styles: {
+        container: {
+          backgroundColor: 'lightblue',
+          fontFamily: '"Stencil Paper", sans-serif',
+          fontSize: '14px',
+          color: '#000000'
+        }
+      }
+    },
+    submitButtons: {
+      submit: {
+        svg: {
+          content: `
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#3B82F6"/>
+          </svg>
+        `
+        }
+      }
+    },
+    chat: {
+      backgroundColor: 'lightblue'
+    },
+    notificationArea: {
+      styles: {
+        backgroundColor: 'yellow',
+        fontFamily: '"Stencil Paper", sans-serif',
+        fontSize: '14px',
+        color: '#1E3A8A'
+      }
+    },
+    feedback: {
+      positiveAction: {
+        svg: `<img src="https://cdn-icons-png.flaticon.com/512/1828/1828640.png" width="24" height="24">`,
+        styles: {
+          backgroundColor: '#22C55E',
+          borderRadius: '6px',
+          padding: '6px'
+        },
+        label: {
+          styles: {
+            fontFamily: '"Stencil Paper", sans-serif',
+            fontSize: '14px',
+            color: '#16A34A'
+          }
+        }
+      },
+      negativeAction: {
+        svg: `<img src="https://cdn-icons-png.flaticon.com/512/1828/1828665.png" width="24" height="24">`,
+        styles: {
+          backgroundColor: '#EF4444',
+          borderRadius: '6px',
+          padding: '6px'
+        },
+        label: {
+          text: 'Que pena que a resposta não ajudou. Esse é um TESTE!'
+        }
+      },
+      negativeForm: {
+        reasonButtons: {
+          hoverBackgroundColor: '#FF0000',
+          styles: {
+            color: '#BB0000',
+            backgroundColor: 'yellow'
+          }
+        }
+      },
+      submitButton: {
+        backgroundColor: 'red'
+      }
+    },
+    header: {
+      title: {
+        text: 'Assistente do Curso de C# Performance'
+      },
+      icon: {
+        svg: "<img src='https://cdn-icons-png.flaticon.com/512/4712/4712027.png' />"
+      },
+      styles: {
+        backgroundColor: '#1E3A8A',
+        color: 'red',
+        fontFamily: '"Stencil Paper", sans-serif',
+        fontSize: '18px'
+      }
+    },
+    messageSuggestions: {
+      default: {
+        color: 'darkblue'
+      },
+      hover: {
+        backgroundColor: '#0078d4'
+      }
+    }
+  });
+
+  ThemeManager.setDarkTheme({
+    chat: {
+      backgroundColor: '#292929'
+    },
+    textInput: {
+      styles: {
+        container: {
+          backgroundColor: '#1e1e1e',
+          color: '#ffffff'
+        }
+      }
+    },
+    header: {
+      styles: {
+        backgroundColor: '#1e1e1e',
+        color: '#ffffff'
+      }
+    }
+  });
+
+  export function enableDefaultTheme() {
+    ThemeManager.setCurrentTheme('default');
+  }
+
+  export function enableDarkTheme() {
+    ThemeManager.setCurrentTheme('dark');
+  }
+
+  document.addEventListener("DOMContentLoaded", function (event) {
+    document.getElementById('default-theme-button').addEventListener('click', enableDefaultTheme);
+    document.getElementById('dark-theme-button').addEventListener('click', enableDarkTheme);
+
+    const tutorChat = document.getElementById('tutor-chat');
+
+    tutorChat.options = {
+      organizationId: "organizationId",
+      productId: "productId",
+      isExternalProductId: true,
+      getToken: getConsumerToken,
+      getCurrentContent: getCurrentContent,
+      startOpened: false,
+      showSuggestions: false
+    };
+  });
+
+  function navigate(currentVideo) {
+    console.log(currentVideo);
+  }
+
+  function getCurrentContent() {
+    return {
+      externalId: 'csharp-perf-video1',
+      position: 600000
+    }
+  }
+
+  async function getConsumerToken() {
+    //Efetuar chamada do response necessária para obter o token
+    var response = "Efetuar chamada do response necessária para obter o token";
+    const tokenResponse = await response.json();
+
+    return tokenResponse.access_token;
+  }
+</script>
+
+</html>

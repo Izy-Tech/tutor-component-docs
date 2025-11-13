@@ -1,5 +1,158 @@
 # Documentação Customização
 
+## 📦 Importando o ThemeManager (Obrigatório)
+
+Para utilizar o `ThemeManager`, é necessário importar o módulo dentro da sua aplicação.
+
+```js
+import { ThemeManager } from './dist/theme-manager.js';
+```
+
+Caso esteja utilizando via HTML com `<script type="module">`, o import deve ser feito assim:
+
+```html
+<script type="module">
+  import { ThemeManager } from './dist/theme-manager.js';
+
+  ThemeManager.setDefaultTheme({
+    /* ... */
+  });
+</script>
+```
+
+---
+
+## 🖼️ Como usar SVG em ícones (closed icon, header, submit button etc.)
+
+Além de imagens (`<img>`), também é possível utilizar SVG inline em qualquer ícone do tema.
+
+### ✔️ Exemplo usando SVG no botão de enviar
+
+```js
+ThemeManager.setDefaultTheme({
+  submitButtons: {
+    submit: {
+      svg: {
+        content: `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="#3B82F6"/>
+        </svg>
+        `
+      }
+    }
+  }
+});
+```
+
+### ✔️ Exemplo usando SVG no título
+
+```js
+ThemeManager.setDefaultTheme({
+  header: {
+    icon: {
+      svg: `
+        <svg width="20" height="20" fill="#3B82F6" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+        </svg>
+      `
+    }
+  }
+});
+```
+
+### ✔️ Exemplo usando SVG no botão fechado
+
+```js
+ThemeManager.setDefaultTheme({
+  closed: {
+    icon: `
+      <svg width="24" height="24" fill="#3B82F6" viewBox="0 0 24 24">
+        <path d="M3 12h18" stroke="#fff" stroke-width="2" />
+      </svg>
+    `
+  }
+});
+```
+
+---
+
+## 🎨 Trabalhando com Temas (Default, Dark e Temas Customizados)
+
+### ⭐ Tema padrão (Default)
+
+```js
+ThemeManager.setDefaultTheme({
+  chat: { backgroundColor: '#ffffff' }
+});
+```
+
+### 🌙 Tema escuro (Dark)
+
+```js
+ThemeManager.setDarkTheme({
+  chat: { backgroundColor: '#1e1e1e' },
+  header: { styles: { color: '#ffffff' }}
+});
+```
+
+## 🎨 Criando seu próprio tema (Custom Theme)
+
+```js
+ThemeManager.setLightTheme({
+  chat: {
+    backgroundColor: '#f5e8ff'
+  },
+  header: {
+    styles: {
+      backgroundColor: '#a855f7',
+      color: '#fff'
+    }
+  }
+});
+```
+
+```js
+ThemeManager.setDarkTheme({
+  chat: {
+    backgroundColor: '#1a1a1a'
+  },
+  header: {
+    styles: {
+      backgroundColor: '#333',
+      color: '#fff'
+    }
+  }
+});
+```
+
+```js
+ThemeManager.setDefaultTheme({
+  chat: {
+    backgroundColor: '#ffffff'
+  }
+});
+```
+
+## 🔄 Alternando temas em runtime
+
+```js
+ThemeManager.setCurrentTheme('default');
+ThemeManager.setCurrentTheme('dark');
+ThemeManager.setCurrentTheme('light');
+```
+
+## 🖱️ Exemplo de botões para alternar temas
+
+```html
+<button onclick="ThemeManager.setCurrentTheme('default')">Tema Padrão</button>
+<button onclick="ThemeManager.setCurrentTheme('dark')">Tema Escuro</button>
+<button onclick="ThemeManager.setCurrentTheme('light')">Meu Tema Customizado</button>
+```
+
+
+
+
 > 💡 **Observação importante:**  
 > Caso deseje utilizar uma fonte diferente da padrão, é necessário adicioná-la manualmente dentro da tag `<head>` do HTML.  
 >   
