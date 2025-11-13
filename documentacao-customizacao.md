@@ -930,8 +930,7 @@ Fechado Código
       productId: "9206CEBB-17F0-5CFE-84A3-0C9B212FE1C8",  
       isExternalProductId: false,  
       getToken: getConsumerToken,  
-      getCurrentContent: getCurrentContent,  
-      avatar: 'https://cdn-icons-png.flaticon.com/512/147/147142.png',  
+      getCurrentContent: getCurrentContent,        
       baseAddress: 'https://localhost:7209',  
       startOpened: false,  
       showSuggestions: true  
@@ -949,8 +948,7 @@ Aberto código:
       productId: "9206CEBB-17F0-5CFE-84A3-0C9B212FE1C8",  
       isExternalProductId: false,  
       getToken: getConsumerToken,  
-      getCurrentContent: getCurrentContent,  
-      avatar: 'https://cdn-icons-png.flaticon.com/512/147/147142.png',  
+      getCurrentContent: getCurrentContent,        
       baseAddress: 'https://localhost:7209',  
       startOpened: true,  
       showSuggestions: true  
@@ -970,8 +968,7 @@ Código mostrar:
       productId: "9206CEBB-17F0-5CFE-84A3-0C9B212FE1C8",  
       isExternalProductId: false,  
       getToken: getConsumerToken,  
-      getCurrentContent: getCurrentContent,  
-      avatar: 'https://cdn-icons-png.flaticon.com/512/147/147142.png',  
+      getCurrentContent: getCurrentContent,        
       baseAddress: 'https://localhost:7209',  
       startOpened: true,  
       showSuggestions: true  
@@ -988,8 +985,7 @@ Código não mostrar:
       productId: "9206CEBB-17F0-5CFE-84A3-0C9B212FE1C8",  
       isExternalProductId: false,  
       getToken: getConsumerToken,  
-      getCurrentContent: getCurrentContent,  
-      avatar: 'https://cdn-icons-png.flaticon.com/512/147/147142.png',  
+      getCurrentContent: getCurrentContent,        
       baseAddress: 'https://localhost:7209',  
       startOpened: true,  
       showSuggestions: false  
