@@ -96,10 +96,10 @@ ThemeManager.setDarkTheme({
 });
 ```
 
-### 🎨 Criando seu próprio tema (Custom Theme)
+## 🎨 Criando seu próprio tema (Custom Theme)
 
 ```js
-ThemeManager.registerTheme('myCustomTheme', {
+ThemeManager.setLightTheme({
   chat: {
     backgroundColor: '#f5e8ff'
   },
@@ -112,21 +112,44 @@ ThemeManager.registerTheme('myCustomTheme', {
 });
 ```
 
-### 🔄 Alternando temas em runtime
+```js
+ThemeManager.setDarkTheme({
+  chat: {
+    backgroundColor: '#1a1a1a'
+  },
+  header: {
+    styles: {
+      backgroundColor: '#333',
+      color: '#fff'
+    }
+  }
+});
+```
+
+```js
+ThemeManager.setDefaultTheme({
+  chat: {
+    backgroundColor: '#ffffff'
+  }
+});
+```
+
+## 🔄 Alternando temas em runtime
 
 ```js
 ThemeManager.setCurrentTheme('default');
 ThemeManager.setCurrentTheme('dark');
-ThemeManager.setCurrentTheme('myCustomTheme');
+ThemeManager.setCurrentTheme('light');
 ```
 
-### 🖱️ Exemplo de botão para trocar tema
+## 🖱️ Exemplo de botões para alternar temas
 
 ```html
-<button onclick="ThemeManager.setCurrentTheme('default')">Tema Claro</button>
+<button onclick="ThemeManager.setCurrentTheme('default')">Tema Padrão</button>
 <button onclick="ThemeManager.setCurrentTheme('dark')">Tema Escuro</button>
-<button onclick="ThemeManager.setCurrentTheme('myCustomTheme')">Meu Tema</button>
+<button onclick="ThemeManager.setCurrentTheme('light')">Meu Tema Customizado</button>
 ```
+
 
 
 
