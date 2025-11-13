@@ -1193,9 +1193,9 @@ O método recebe:
 }
 ```
 
-### O que o implementador do componente deve fazer (exemplo c# com Blazor)?
+### O que o implementador do componente deve fazer?
 
-```c#
+```js
 videoNavigation(currentVideo) {
     const productId = this.tutorChat?.options?.productId;
 
@@ -1207,7 +1207,7 @@ videoNavigation(currentVideo) {
     url.searchParams.set('documentId', currentVideo.id);
     url.searchParams.set('position', Math.round(currentVideo.startTime ?? 0));
 
-    this.blazorCallback.invokeMethodAsync('NavigateTo', url.toString(), true);
+    //invocar a chamada aqui;
 }
 ```
 
@@ -1247,7 +1247,7 @@ O objeto recebido:
 }
 ```
 
-### O que o implementador do componente deve fazer (exemplo c# com Blazor)?
+### O que o implementador do componente deve fazer?
 
 ```js
 textNavigation(currentText) {
@@ -1261,7 +1261,7 @@ textNavigation(currentText) {
     url.searchParams.set('documentId', currentText.id);
     url.searchParams.set('position', currentText.page ?? 0);
 
-    this.blazorCallback.invokeMethodAsync('NavigateTo', url.toString(), true);
+    //invocar a chamada aqui;
 }
 ```
 
@@ -1350,34 +1350,29 @@ export type CurrentContentResponse = {
 
 ---
 
-##  Exemplo real de retorno (do Blazor)
+##  Exemplo real de retorno
 
-```csharp
-[JSInvokable]
-public async Task<object> GetCurrentContent()
-{
-    if (_current?.DocumentFileType == "Text")
-    {
-        return new
-        {
-            documentId = _current?.ExternalId is not null ? _current?.ExternalId : _current?.Id.ToString(),
-            type = 1,
-            position = CurrentPage,
-            isExternalId = true
-        };
-    }
-    else
-    {
-        var currentVideoTime = await GetCurrentTimeAsync();
-        return new
-        {
-            documentId = _current?.ExternalId is not null ? _current?.ExternalId : _current?.Id.ToString(),
-            type = 0,
-            position = currentVideoTime,
-            isExternalId = _current?.ExternalId is not null
-        };
-    }
+```js
+async function getCurrentContent() {
+  if (current?.DocumentFileType === "Text") {
+    return {
+      documentId: current?.ExternalId != null ? current.ExternalId : String(current?.Id),
+      type: 1,
+      position: currentPage,
+      isExternalId: true
+    };
+  } else {
+    const currentVideoTime = await getCurrentTimeAsync();
+
+    return {
+      documentId: current?.ExternalId != null ? current.ExternalId : String(current?.Id),
+      type: 0,
+      position: currentVideoTime,
+      isExternalId: current?.ExternalId != null
+    };
+  }
 }
+
 ```
 
 ---
