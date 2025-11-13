@@ -58,8 +58,8 @@
     url.searchParams.set('documentId', currentVideo.id);
     url.searchParams.set('position', Math.round(currentVideo.startTime || 0));
 
-    // Redireciona via Blazor (ou sua própria lógica)
-    blazorRef.invokeMethodAsync('NavigateTo', url.toString(), true);
+    // Redireciona  sua própria lógica    
+    //exemplo.redirecionamento('NavigateTo', url.toString(), true);
   }
 
   function textNavigation(currentText) {
@@ -71,7 +71,8 @@
     url.searchParams.set('documentId', currentText.id);
     url.searchParams.set('position', currentText.page || 0);
 
-    blazorRef.invokeMethodAsync('NavigateTo', url.toString(), true);
+    // Redireciona  sua própria lógica    
+    //exemplo.redirecionamento('NavigateTo', url.toString(), true);
   }
 
   async function getConsumerToken() {
