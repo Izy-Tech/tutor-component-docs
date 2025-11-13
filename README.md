@@ -1,6 +1,19 @@
-# Documentação Customização
+# Documentação Componente
 
+## Essa documentação aborda como customizar o componente e seus callbacks.
+
+[Ir para Customização](#customizacao)
+
+[Ir para Navegação de vídeos e textos](#navegacao)
+
+[Ir para Enviar momento atual](#getcurrentcontent)
+
+--- 
+
+# Documentação Customização
+<a id="customizacao"></a>
 ## 📦 Importando o ThemeManager (Obrigatório)
+
 
 Para utilizar o `ThemeManager`, é necessário importar o módulo dentro da sua aplicação.
 
@@ -1151,6 +1164,7 @@ Resultado:
 
 
 --- 
+<a id="navegacao-de-videos-e-textos"></a>
 # Documentação — Navegação de Vídeo e Texto (videoNavigation / textNavigation)
 
 Quando a IA identifica um conteúdo relevante dentro de um **vídeo** ou **documento PDF**, ela pode retornar o ponto exato onde aquele conteúdo aparece.  
@@ -1288,9 +1302,7 @@ private async videoDocumentClick(event) {
 
 O mesmo ocorre para PDF (textNavigation).
 
----
-
-## Resumo para o cliente
+## Resumo
 
 - A IA monitora o conteúdo do curso (vídeos + PDFs)
 - Quando identifica uma parte relevante:
@@ -1302,6 +1314,7 @@ O mesmo ocorre para PDF (textNavigation).
 Isso permite que o aluno vá diretamente ao ponto que contém a explicação necessária — aumentando retenção e experiência.
 
 ---
+<a id="getcurrentcontent"></a>
 # Como funciona o `getCurrentContent`
 
 O componente `<tutor-chat>` precisa saber **onde o aluno está atualmente no curso** para enviar essa informação ao backend da IA.  
