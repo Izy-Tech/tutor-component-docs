@@ -1006,13 +1006,15 @@ Resultado:
 
 Código:
 ```js
-ThemeManager.setDefaultTheme({  
-  header: {  
-    styles: {  
-      color: 'red'  
-    }  
-  }  
-});
+  ThemeManager.setDefaultTheme({
+    header: {
+      title: {
+        styles: {
+          color: '#ff0000'
+        },
+      }
+    }
+  });
 ```
 
 Resultado:
@@ -1085,6 +1087,22 @@ ThemeManager.setDefaultTheme({
 Resultado:  
 
 <img width="733" height="198" alt="image" src="https://github.com/user-attachments/assets/29198ce4-0790-4ab2-9cac-8d182ee4754d" />
+
+### Cor do Título
+Código:
+```js
+  ThemeManager.setDefaultTheme({
+    header: {
+      title: {
+        styles: {
+          color: '#ff0000'
+        }
+      }
+    }
+  });
+```
+Resultado:  
+<img width="829" height="256" alt="image" src="https://github.com/user-attachments/assets/699f7ec5-0512-4bf2-9dac-4da64fc0e54e" />
 
 ## Opções 
 ### Iniciar com o chat minimizado ou aberto (boolean)
