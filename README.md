@@ -1190,7 +1190,52 @@ Para isso, você deve implementar dois callbacks: **onVideoDocumentNavigation** 
 
 Essas funções recebem um objeto contendo informações sobre o conteúdo indexado e devem redirecionar o usuário para o material correspondente no player do produtor.
 
+Callbacks disponíveis
+### onVideoDocumentNavigation
+
+Chamado quando o usuário clica em um link de conteúdo de vídeo retornado pela IA.
+### onTextDocumentNavigation
+
+Chamado quando o usuário clica em um link de conteúdo textual (PDF) retornado pela IA.
+Essas funções recebem um objeto com metadados do conteúdo indexado (id, nome, URL amigável, tempo ou página) e devem executar a navegação no player ou visualizador do produto.
+Flags de habilitação
+Além dos callbacks, o componente exige flags explícitas para habilitar a navegação:
+### enableVideoDocumentsNavigation
+### enableTextDocumentsNavigation
+Essas flags controlam se os links serão exibidos na interface.
+
 ---
+```js
+      tutorChat.options = {
+        organizationId: "",
+        productId: "",
+        isExternalProductId: true,
+        getToken: getConsumerToken,
+        getCurrentContent: getCurrentContent,
+        startOpened: true,
+        onVideoDocumentNavigation: (v) => this.videoNavigation(v),
+        onTextDocumentNavigation: (t) => this.textNavigation(t),
+        enableVideoDocumentsNavigation: true,
+        enableTextDocumentsNavigation: true
+      };
+```
+
+## Regra de funcionamento (IMPORTANTE)
+
+A navegação só é ativada quando DUAS condições são atendidas ao mesmo tempo:
+
+Para vídeos
+```
+enableTextDocumentsNavigation === true
+E
+onTextDocumentNavigation foi implementado
+```
+Para documentos
+```
+enableVideoDocumentsNavigation === true
+E
+onVideoDocumentNavigation foi implementado
+```
 
 ## Navegação em Vídeos (`videoNavigation`)
 
