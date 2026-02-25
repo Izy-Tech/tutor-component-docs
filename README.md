@@ -1399,8 +1399,10 @@ O retorno deve seguir a interface:
 
 ```ts
 export type CurrentContentResponse = {
-  externalId: string;
-  position: number;
+  documentId: string,
+  type: number,
+  position: number,
+  isExternalId: boolean
 }
 ```
 
@@ -1408,8 +1410,10 @@ export type CurrentContentResponse = {
 
 | Campo | Descrição |
 |-------|-----------|
-| **externalId** | Identificador do conteúdo atual (vídeo, PDF, ...). |
+| **documentId** | Identificador do conteúdo atual (vídeo, PDF, ...). Pode ser um Id Externo, nesse caso o isExternalId deve ser true. |
+| **type** | 0 para vídeo 1 para texto |
 | **position** | Posição atual dentro do conteúdo. <br> Para **vídeos**, é o tempo em milissegundos. <br> Para **textos**, é o número da página atual. |
+| **isExternalId** | Indica se o documentId é um Id Externo |
 
 ---
 
@@ -1440,17 +1444,6 @@ async function getCurrentContent() {
 
 ---
 
-##  Como o chat converte isso internamente
-
-```ts
-return {
-  externalId: object.documentId,
-  position: object.position
-};
-```
-
----
-
 ## Como o cliente deve implementar o `getCurrentContent`
 
 ### ✔ Exemplo para vídeo
@@ -1458,8 +1451,10 @@ return {
 ```js
 getCurrentContent: async () => {
   return {
-    externalId: "video-aula-12",
-    position: player.currentTime * 1000
+    documentId: "video-aula-12",
+    type: 0,
+    position: player.currentTime * 1000,
+    isExternalId: true
   };
 }
 ```
@@ -1469,21 +1464,10 @@ getCurrentContent: async () => {
 ```js
 getCurrentContent: async () => {
   return {
-    externalId: "pdf-capitulo-3",
-    position: pdfViewer.currentPage
+    documentId: "pdf-capitulo-3",
+    type: 1,
+    position: pdfViewer.currentPage,
+    isExternalId: true
   };
 }
 ```
-
----
-
-## Resumo técnico
-
-- `getCurrentContent()` **é obrigatório**
-- Deve retornar `{ externalId, position }`
-- Para vídeos → posição em **milissegundos**
-- Para PDFs/textos → posição é a **página atual**
-
----
-
-Fim.
