@@ -1471,3 +1471,37 @@ getCurrentContent: async () => {
   };
 }
 ```
+
+# Funções
+
+## Open
+
+Função para abrir o chat, pode ser utilizada para abrir a janela do chat a partir de outro local, por exemplo um botão customizado.
+
+```js
+export function openChat() {
+  const tutorChat = document.getElementById('tutor-chat');
+  tutorChat.open();
+}
+```
+
+**Importante**: a função somente será executada caso o componente tenha sido configurado corretamente.
+
+## Close
+
+Função para fechar o chat
+
+```js
+export function closeChat() {
+  const tutorChat = document.getElementById('tutor-chat');
+  tutorChat.close();
+}
+```
+
+Muitas vezes é desejável esconder o botão original caso o fluxo de abrir e fechar seja feito por botões customizados, nesse caso é possível utilizar a classe .chat-ative em um estilo css:
+
+```css
+.chat:not(.chat-active) {
+  display: none;
+}
+```
