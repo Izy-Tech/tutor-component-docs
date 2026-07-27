@@ -1183,15 +1183,22 @@ Resultado:
 
 ## Botão de Speech to Text (Microfone)
 
-### Default
+### Estados do Microfone
 
-Sem clique:
+#### 1. Estado Padrão (Default)
+Botão sem interação do usuário.
 
-<!-- IMAGEM AQUI: mic default sem clique -->
+<img width="714" height="92" alt="image" src="https://github.com/user-attachments/assets/f43a5b8b-5317-481e-a1c5-043c67b81483" />
 
-Com clique:
+#### 2. Estado Hover
+Botão quando o cursor do mouse está sobre o componente.
 
-<!-- IMAGEM AQUI: mic default com clique -->
+<img width="750" height="110" alt="image" src="https://github.com/user-attachments/assets/730e8ee1-7cb1-4264-850f-cd6c8876bfcb" />
+
+#### 3. Estado Ativo (Recording)
+Botão enquanto o microfone está capturando áudio.
+
+<img width="722" height="91" alt="image" src="https://github.com/user-attachments/assets/dc5db486-4a14-426e-87d0-dcecdd489164" />
 
 ### Mic customizado
 
@@ -1257,13 +1264,22 @@ ThemeManager.setDefaultTheme({
 
 Resultado:
 
-Sem clique:
+### Estados do Microfone
 
-<!-- IMAGEM AQUI: mic customizado sem clique -->
+#### 1. Estado Padrão (Default)
+Botão sem interação do usuário.
 
-Com clique:
+<img width="731" height="106" alt="image" src="https://github.com/user-attachments/assets/389f93b1-3eac-4e81-a4fc-5b8282f8add4" />
 
-<!-- IMAGEM AQUI: mic customizado com clique -->
+#### 2. Estado Hover
+Botão quando o cursor do mouse está sobre o componente.
+
+<img width="714" height="103" alt="image" src="https://github.com/user-attachments/assets/81f22eeb-63c1-423a-b82c-cf7af3edbe6f" />
+
+#### 3. Estado Ativo (Recording)
+Botão enquanto o microfone está capturando áudio.
+
+<img width="738" height="92" alt="image" src="https://github.com/user-attachments/assets/6b0284c3-ca38-43fe-903c-11a70ce23c4d" />
 
 --- 
 <a id="navegacao"></a>
