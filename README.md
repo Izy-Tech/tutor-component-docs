@@ -1181,6 +1181,90 @@ Resultado:
 <img width="786" height="336" alt="image" src="https://github.com/user-attachments/assets/a1d60a74-5092-4031-af97-28d714462337" />
 
 
+## Botão de Speech to Text (Microfone)
+
+### Default
+
+Sem clique:
+
+<!-- IMAGEM AQUI: mic default sem clique -->
+
+Com clique:
+
+<!-- IMAGEM AQUI: mic default com clique -->
+
+### Mic customizado
+
+Código:
+
+```js
+ThemeManager.setDefaultTheme({
+    speechToText: {
+        button: {
+            default: {
+                container: {
+                    default: {
+                        width: '24px',
+                        height: '24px',
+                        background: 'transparent',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'background .15s ease'
+                    },
+                    hover: {
+                        backgroundColor: '#7fbded69'
+                    },
+                    click: {
+                        backgroundColor: '#4babf669'
+                    }
+                },
+                svg: {
+                    styles: {
+                        default: {
+                            filter: 'none',
+                            fill: '#359468'
+                        }
+                    }
+                }
+            },
+            active: {
+                container: {
+                    default: {
+                        backgroundColor: '#ffd07c70'
+                    },
+                    hover: {
+                        backgroundColor: '#7fbded69'
+                    },
+                    click: {
+                        backgroundColor: '#4babf669'
+                    }
+                },
+                svg: {
+                    styles: {
+                        default: {
+                            filter: 'none',
+                            fill: '#c77930'
+                        }
+                    }
+                }
+            }
+        }
+    }
+});
+```
+
+Resultado:
+
+Sem clique:
+
+<!-- IMAGEM AQUI: mic customizado sem clique -->
+
+Com clique:
+
+<!-- IMAGEM AQUI: mic customizado com clique -->
+
 --- 
 <a id="navegacao"></a>
 # Documentação — Navegação de Vídeo e Texto (videoNavigation / textNavigation)
