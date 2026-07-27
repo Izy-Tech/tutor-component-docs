@@ -1181,6 +1181,106 @@ Resultado:
 <img width="786" height="336" alt="image" src="https://github.com/user-attachments/assets/a1d60a74-5092-4031-af97-28d714462337" />
 
 
+## Botão de Speech to Text (Microfone)
+
+### Estados do Microfone
+
+#### 1. Estado Padrão (Default)
+Botão sem interação do usuário.
+
+<img width="714" height="92" alt="image" src="https://github.com/user-attachments/assets/f43a5b8b-5317-481e-a1c5-043c67b81483" />
+
+#### 2. Estado Hover
+Botão quando o cursor do mouse está sobre o componente.
+
+<img width="750" height="110" alt="image" src="https://github.com/user-attachments/assets/730e8ee1-7cb1-4264-850f-cd6c8876bfcb" />
+
+#### 3. Estado Ativo (Recording)
+Botão enquanto o microfone está capturando áudio.
+
+<img width="722" height="91" alt="image" src="https://github.com/user-attachments/assets/dc5db486-4a14-426e-87d0-dcecdd489164" />
+
+### Mic customizado
+
+Código:
+
+```js
+ThemeManager.setDefaultTheme({
+    speechToText: {
+        button: {
+            default: {
+                container: {
+                    default: {
+                        width: '24px',
+                        height: '24px',
+                        background: 'transparent',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'background .15s ease'
+                    },
+                    hover: {
+                        backgroundColor: '#7fbded69'
+                    },
+                    click: {
+                        backgroundColor: '#4babf669'
+                    }
+                },
+                svg: {
+                    styles: {
+                        default: {
+                            filter: 'none',
+                            fill: '#359468'
+                        }
+                    }
+                }
+            },
+            active: {
+                container: {
+                    default: {
+                        backgroundColor: '#ffd07c70'
+                    },
+                    hover: {
+                        backgroundColor: '#7fbded69'
+                    },
+                    click: {
+                        backgroundColor: '#4babf669'
+                    }
+                },
+                svg: {
+                    styles: {
+                        default: {
+                            filter: 'none',
+                            fill: '#c77930'
+                        }
+                    }
+                }
+            }
+        }
+    }
+});
+```
+
+Resultado:
+
+### Estados do Microfone
+
+#### 1. Estado Padrão (Default)
+Botão sem interação do usuário.
+
+<img width="731" height="106" alt="image" src="https://github.com/user-attachments/assets/389f93b1-3eac-4e81-a4fc-5b8282f8add4" />
+
+#### 2. Estado Hover
+Botão quando o cursor do mouse está sobre o componente.
+
+<img width="714" height="103" alt="image" src="https://github.com/user-attachments/assets/81f22eeb-63c1-423a-b82c-cf7af3edbe6f" />
+
+#### 3. Estado Ativo (Recording)
+Botão enquanto o microfone está capturando áudio.
+
+<img width="738" height="92" alt="image" src="https://github.com/user-attachments/assets/6b0284c3-ca38-43fe-903c-11a70ce23c4d" />
+
 --- 
 <a id="navegacao"></a>
 # Documentação — Navegação de Vídeo e Texto (videoNavigation / textNavigation)
