@@ -10,7 +10,9 @@
 
 [Ferramentas do agente: cupons e outros resultados no chat (`backendTools`)](documentacao-ferramentas.md)
 
-[Motor de regras: abrir o chat, dicas e o agente puxando conversa (`rules`, `track`, `getContext`)](documentacao-regras.md)
+[Contexto da página: o que a página conta ao agente a cada mensagem (`getContext`)](documentacao-contexto.md)
+
+[Motor de regras: abrir o chat, dicas e o agente puxando conversa (`rules`, `track`)](documentacao-regras.md)
 
 --- 
 

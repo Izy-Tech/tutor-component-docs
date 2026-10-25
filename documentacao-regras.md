@@ -145,34 +145,19 @@ Eventos informados antes de o chat receber as opções ficam guardados (até 50)
 <a id="contexto"></a>
 ## 4. Contexto da página: `getContext`
 
-`getContext` diz **onde o usuário está e o que aconteceu** na página. O chat lê esse contexto em dois momentos:
-
-1. **A cada mensagem e a cada [`agentTurn`](#acao-agentturn)**, enviando-o ao agente. O agente responde à situação real sem que o comprador precise explicá-la ("não deu, e agora?" já basta).
-2. **Quando uma regra tem condições**, que leem `context.*`.
+As condições das regras podem ler `context.*`: o resultado da função `getContext` das opções, no momento do evento. É o mesmo contexto que o agente recebe a cada mensagem e quando [puxa conversa](#acao-agentturn).
 
 ```js
-tutorChat.options = {
-  // ...
-  getContext: () => ({
-    'Etapa do checkout': 'na etapa de pagamento',
-    'Forma de pagamento selecionada': 'cartão de crédito',
-    'Total': 'R$ 197,00',
-    'Parcelamento no cartão': 'até 12x de R$ 18,62',
-    'Tentativas de pagamento': 'cartão recusado (recusado pelo banco emissor) às 14:32',
-    'Segundos sem interação': 45,
-  }),
-};
+getContext: () => ({
+  'Etapa do checkout': 'na etapa de pagamento',
+  'Cartões recusados': 1,
+}),
+
+// em uma regra
+if: [{ path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' }]
 ```
 
-- **Formato:** um objeto `descrição → valor` (como acima) ou uma lista `[{ description, value }]`. Pode ser síncrono ou devolver uma Promise.
-- **Valores vazios são omitidos** (`null`, `undefined`, `''`). Números e booleanos viram texto.
-- **Escreva as descrições como frases legíveis:** o agente lê exatamente esse texto.
-- **Se `getContext` lançar um erro,** a mensagem é enviada sem contexto e o erro vai para o console.
-- **Limites no servidor:** até 20 itens, 80 caracteres por descrição e 300 por valor. O excedente é cortado.
-
-> ⚠️ **Nunca coloque dados pessoais ou de pagamento no contexto** (nome, e-mail, CPF, número do cartão). Informe o **estado**, como "CPF inválido", e não o CPF.
-
-> ⚠️ O contexto passa pelo navegador, então o comprador pode alterá-lo. O agente o trata como **dado, não como instrução**. Use-o para orientar a conversa, nunca para decidir algo sensível (preço, elegibilidade a desconto).
+Tudo sobre o contexto (formato, como escrevê-lo, como o agente o usa, segurança e limites) está em **[Contexto da página](documentacao-contexto.md)**.
 
 ---
 
@@ -511,7 +496,7 @@ checkout.onPixGerado(() => tutorChat.track('pix_generated'));
 | `sessionStorage` bloqueado (modo privado restrito) | Os limites ficam só em memória e valem até recarregar a página. |
 | Regra com `id` repetido na lista | Vale a última. |
 | Erro em uma ação | Vai para o console. As outras ações da regra e as outras regras continuam. |
-| `getContext` lança erro durante uma condição | As condições recebem um contexto vazio e as que dependem dele falham. |
+| `getContext` ausente ou lança erro durante uma condição | As condições recebem um contexto vazio: `eq`, `exists`, `gt` e `lt` falham, mas **`neq` passa** (vazio é diferente de qualquer valor). |
 | Evento informado antes de `options` | Fica na fila (até 50) e é avaliado quando as regras carregam. |
 | `track` com um nome que nenhuma regra usa | Nada acontece (custo quase zero). |
 | Usuário fechou o chat e uma regra tem `skipIfUserClosed` | A regra não roda mais nesta visita. Fechar pelo código (`close()`) não conta. |
