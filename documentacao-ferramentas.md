@@ -71,7 +71,7 @@ tutorChat.options = {
 | `done` | no lugar de `loading`, quando o resultado chega |
 | `error` | no lugar de `loading`, se a ferramenta falhar ou o resultado for inválido. Sem `error`, usa `done`, e sem `done`, o próprio `loading` (sem o brilho) |
 
-> **Padrão:** a busca nos documentos do tutor (`OpenSearch`) já vem configurada com "Buscando nos documentos..." / "Buscou documentos". Para trocar os textos, configure `OpenSearch` em `backendTools`.
+> **Padrão:** a ferramenta de busca nos documentos (`OpenSearch`) já vem configurada no componente com "Buscando nos documentos..." / "Buscou documentos". Para trocar os textos, configure `OpenSearch` em `backendTools`.
 
 ---
 

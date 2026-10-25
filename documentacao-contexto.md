@@ -127,7 +127,7 @@ No servidor, o contexto vira uma mensagem no **fim** do que o agente lê, identi
 - **O agente é instruído a usá-lo naturalmente:** ele não comenta que recebeu o contexto e não o repete, apenas age de acordo.
 - **As instruções do agente definem o que fazer com cada situação.** O agente de checkout, por exemplo, sabe que "cartão recusado" pede empatia e a oferta do Pix, e que "Pix gerado" pede a explicação de como pagar.
 
-> ⚠️ **Hoje, apenas o `checkout-agent` recebe o contexto da página.** Os outros agentes (o tutor e o `expert-agent`) ignoram o `getContext`. Para que outro agente use o contexto, ele precisa ser habilitado no servidor e receber instruções sobre como usá-lo.
+> ⚠️ **O agente precisa estar preparado no servidor para usar o contexto:** habilitado para recebê-lo e com instruções sobre o que fazer com cada situação. Um agente sem isso ignora o `getContext`. Confirme com quem configura o agente antes de depender do contexto.
 
 ---
 
@@ -142,7 +142,6 @@ As duas funções enviam ao agente o que a página sabe, mas servem para coisas 
 | **Formato** | estruturado: `documentId`, `type`, `position` | `descrição → valor` |
 | **Quem interpreta** | o servidor, que localiza a aula e o momento no conteúdo indexado | o próprio agente, que lê o texto |
 | **Exemplo de uso** | "explique esse trecho" no player de vídeo | "não deu, e agora?" no checkout |
-| **Agentes** | tutor | `checkout-agent` (hoje) |
 
 As duas podem ser usadas juntas na mesma página.
 

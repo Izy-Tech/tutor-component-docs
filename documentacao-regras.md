@@ -329,7 +329,7 @@ O agente envia uma mensagem **sem que o usuário tenha escrito nada**:
 **Requisitos:**
 
 - **Contexto para o agente:** o que o agente fala vem do que a página envia a ele em [`getContext`](documentacao-contexto.md). Sem isso, ele sabe apenas o nome do evento e da regra.
-- **Instruções do agente:** o agente precisa de instruções para "puxar conversa". Hoje o **`checkout-agent`** está preparado para isso. Outros agentes recebem o pedido, mas não têm essas instruções.
+- **Instruções do agente:** o agente precisa estar preparado no servidor para "puxar conversa", com instruções sobre como abrir a conversa. Um agente sem elas recebe o pedido, mas pode não responder como o esperado.
 
 ---
 
@@ -404,7 +404,7 @@ const tutorChat = document.getElementById('tutor-chat');
 
 tutorChat.options = {
   productId: '…',
-  agentName: 'checkout-agent',
+  agentName: '…',   // o agente configurado para o checkout
   isExternalProductId: false,
   getToken: obterToken,
 
