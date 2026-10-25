@@ -13,21 +13,20 @@ A divisão de responsabilidades é simples:
 1. [Conceitos](#conceitos)
 2. [Primeiros passos](#primeiros-passos)
 3. [Informando eventos: `track`](#track)
-4. [Contexto da página: `getContext`](#contexto)
-5. [Anatomia de uma regra](#anatomia)
+4. [Anatomia de uma regra](#anatomia)
    - [`when`: o gatilho](#when)
    - [`if`: as condições](#if)
    - [`then`: as ações](#then)
    - [`limit`, `stop` e `enabled`](#limit)
-6. [Ações em detalhe](#acoes)
+5. [Ações em detalhe](#acoes)
    - [`open`](#acao-open)
    - [`tooltip`](#acao-tooltip)
    - [`agentTurn`: o agente puxa conversa](#acao-agentturn)
-7. [Pausando as regras: `suppressRules`](#suppress)
-8. [Acompanhando: evento `rule-matched`](#monitorando)
-9. [Exemplo completo: checkout](#exemplo-checkout)
-10. [Comportamentos e casos de borda](#casos-de-borda)
-11. [Referência](#referencia)
+6. [Pausando as regras: `suppressRules`](#suppress)
+7. [Acompanhando: evento `rule-matched`](#monitorando)
+8. [Exemplo completo: checkout](#exemplo-checkout)
+9. [Comportamentos e casos de borda](#casos-de-borda)
+10. [Referência](#referencia)
 
 ---
 
@@ -142,27 +141,8 @@ Eventos informados antes de o chat receber as opções ficam guardados (até 50)
 
 ---
 
-<a id="contexto"></a>
-## 4. Contexto da página: `getContext`
-
-As condições das regras podem ler `context.*`: o resultado da função `getContext` das opções, no momento do evento. É o mesmo contexto que o agente recebe a cada mensagem e quando [puxa conversa](#acao-agentturn).
-
-```js
-getContext: () => ({
-  'Etapa do checkout': 'na etapa de pagamento',
-  'Cartões recusados': 1,
-}),
-
-// em uma regra
-if: [{ path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' }]
-```
-
-Tudo sobre o contexto (formato, como escrevê-lo, como o agente o usa, segurança e limites) está em **[Contexto da página](documentacao-contexto.md)**.
-
----
-
 <a id="anatomia"></a>
-## 5. Anatomia de uma regra
+## 4. Anatomia de uma regra
 
 ```js
 {
@@ -176,7 +156,7 @@ Tudo sobre o contexto (formato, como escrevê-lo, como o agente o usa, seguranç
 ```
 
 <a id="when"></a>
-### 5.1 `when`: o gatilho
+### 4.1 `when`: o gatilho
 
 **Por evento:** a regra é avaliada sempre que o evento é informado.
 
@@ -201,7 +181,7 @@ Como o silêncio funciona:
 - **Também pausa durante uma [supressão](#suppress)** e continua de onde parou depois.
 
 <a id="if"></a>
-### 5.2 `if`: as condições
+### 4.2 `if`: as condições
 
 Uma lista de condições, e **todas** precisam ser verdadeiras (E lógico). Sem `if`, a regra roda sempre que o gatilho acontece.
 
@@ -217,7 +197,7 @@ if: [
 | Prefixo | O que é | Exemplo |
 |---|---|---|
 | `event.` | os dados do `track` que disparou a regra | `event.method`, `event.reason` |
-| `context.` | o resultado de `getContext()` **no momento do evento**, pela descrição | `context.Etapa do checkout` |
+| `context.` | o [contexto da página](documentacao-contexto.md) **no momento do evento**, pela descrição | `context.Etapa do checkout` |
 | `chat.` | o estado do chat | `chat.isOpen`, `chat.isAnswering`, `chat.suppressed` |
 
 > Em `context.`, tudo depois do primeiro ponto é a descrição inteira. `context.Versão 2.0 do plano` lê a descrição `Versão 2.0 do plano`, com ponto e tudo.
@@ -236,7 +216,7 @@ if: [
 - **`gt` e `lt` convertem para número.** Um valor do contexto como `'2'` funciona.
 
 <a id="then"></a>
-### 5.3 `then`: as ações
+### 4.3 `then`: as ações
 
 Uma lista de ações executadas **em ordem**. Se uma falhar, as seguintes continuam.
 
@@ -249,7 +229,7 @@ Uma lista de ações executadas **em ordem**. Se uma falhar, as seguintes contin
 Detalhes de cada uma em [Ações em detalhe](#acoes).
 
 <a id="limit"></a>
-### 5.4 `limit`, `stop` e `enabled`
+### 4.4 `limit`, `stop` e `enabled`
 
 | Campo | Efeito |
 |---|---|
@@ -274,15 +254,15 @@ rules: [
 ---
 
 <a id="acoes"></a>
-## 6. Ações em detalhe
+## 5. Ações em detalhe
 
 <a id="acao-open"></a>
-### 6.1 `open`
+### 5.1 `open`
 
 Abre o chat com a saudação normal. Se o chat já estiver aberto, não faz nada.
 
 <a id="acao-tooltip"></a>
-### 6.2 `tooltip`
+### 5.2 `tooltip`
 
 Mostra um texto no balão ao lado do botão do chat fechado, sem abrir o chat:
 
@@ -301,7 +281,7 @@ Mostra um texto no balão ao lado do botão do chat fechado, sem abrir o chat:
 - **Com o chat aberto,** o texto fica guardado e só aparece quando o chat fechar. Por isso o exemplo usa a condição `chat.isOpen = false`.
 
 <a id="acao-agentturn"></a>
-### 6.3 `agentTurn`: o agente puxa conversa
+### 5.3 `agentTurn`: o agente puxa conversa
 
 O agente envia uma mensagem **sem que o usuário tenha escrito nada**, baseada no contexto da página:
 
@@ -333,13 +313,13 @@ O agente envia uma mensagem **sem que o usuário tenha escrito nada**, baseada n
 
 **Requisitos:**
 
-- **Contexto:** o agente responde a partir do [contexto da página](#contexto). Sem `getContext`, ele sabe apenas o nome do evento.
+- **Contexto:** o agente responde a partir do [contexto da página](documentacao-contexto.md). Sem ele, o agente sabe apenas o nome do evento.
 - **Instruções do agente:** o agente precisa de instruções para "puxar conversa". Hoje o **`checkout-agent`** está preparado para isso. Outros agentes recebem o pedido, mas não têm essas instruções.
 
 ---
 
 <a id="suppress"></a>
-## 7. Pausando as regras: `suppressRules`
+## 6. Pausando as regras: `suppressRules`
 
 Há momentos em que o chat **não deve** aparecer sozinho: pagamento sendo processado, desafio 3DS do banco, um modal da própria página.
 
@@ -368,7 +348,7 @@ try {
 ---
 
 <a id="monitorando"></a>
-## 8. Acompanhando: evento `rule-matched`
+## 7. Acompanhando: evento `rule-matched`
 
 Quando o gatilho de uma regra acontece, o chat dispara um evento `rule-matched` contando o que aconteceu com ela:
 
@@ -400,7 +380,7 @@ Também funciona abrir a página em uma aba nova, ou rodar `sessionStorage.clear
 ---
 
 <a id="exemplo-checkout"></a>
-## 9. Exemplo completo: checkout
+## 8. Exemplo completo: checkout
 
 Um checkout que informa os acontecimentos e deixa as regras cuidarem do chat:
 
@@ -413,6 +393,7 @@ tutorChat.options = {
   isExternalProductId: false,
   getToken: obterToken,
 
+  // o contexto que o agente e as condições leem (veja documentacao-contexto.md)
   getContext: () => ({
     'Etapa do checkout': checkout.etapaLegivel(),          // "na etapa de pagamento", "compra concluída"…
     'Forma de pagamento selecionada': checkout.metodo(),   // "cartão de crédito", "Pix", "boleto"
@@ -484,7 +465,7 @@ checkout.onPixGerado(() => tutorChat.track('pix_generated'));
 ---
 
 <a id="casos-de-borda"></a>
-## 10. Comportamentos e casos de borda
+## 9. Comportamentos e casos de borda
 
 | Situação | O que acontece |
 |---|---|
@@ -496,7 +477,7 @@ checkout.onPixGerado(() => tutorChat.track('pix_generated'));
 | `sessionStorage` bloqueado (modo privado restrito) | Os limites ficam só em memória e valem até recarregar a página. |
 | Regra com `id` repetido na lista | Vale a última. |
 | Erro em uma ação | Vai para o console. As outras ações da regra e as outras regras continuam. |
-| `getContext` ausente ou lança erro durante uma condição | As condições recebem um contexto vazio: `eq`, `exists`, `gt` e `lt` falham, mas **`neq` passa** (vazio é diferente de qualquer valor). |
+| [Contexto da página](documentacao-contexto.md) ausente ou com erro durante uma condição | As condições recebem um contexto vazio: `eq`, `exists`, `gt` e `lt` falham, mas **`neq` passa** (vazio é diferente de qualquer valor). |
 | Evento informado antes de `options` | Fica na fila (até 50) e é avaliado quando as regras carregam. |
 | `track` com um nome que nenhuma regra usa | Nada acontece (custo quase zero). |
 | Usuário fechou o chat e uma regra tem `skipIfUserClosed` | A regra não roda mais nesta visita. Fechar pelo código (`close()`) não conta. |
@@ -504,17 +485,12 @@ checkout.onPixGerado(() => tutorChat.track('pix_generated'));
 ---
 
 <a id="referencia"></a>
-## 11. Referência
+## 10. Referência
 
 ### Opções
 
 ```ts
 rules?: Rule[];
-getContext?: () => PageContext | Promise<PageContext>;
-
-type PageContext =
-  | Record<string, string | number | boolean | null | undefined>
-  | { description: string; value: string }[];
 
 type Rule = {
   id: string;
