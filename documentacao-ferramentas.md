@@ -23,19 +23,22 @@ Durante uma resposta, o agente pode chamar **ferramentas** que rodam no servidor
 <a id="como-funciona"></a>
 ## 1. Como funciona
 
-```
-usuário: "tem cupom de desconto?"
-   │
-   ▼
-agente decide chamar a ferramenta GenerateCoupon (no servidor)
-   │
-   ├─ início da chamada   ──►  chat mostra o texto de `loading` ("Gerando seu cupom...")
-   │
-   ├─ resultado chega     ──►  `loading` vira `done` ("Cupom gerado")
-   │                           e o chat desenha o card (template, render ou mount)
-   │
-   ▼
-agente escreve o texto da resposta, abaixo do card
+```mermaid
+sequenceDiagram
+    actor U as Usuário
+    participant C as Chat (página)
+    participant A as Agente (servidor)
+
+    U->>C: "tem cupom de desconto?"
+    C->>A: mensagem
+    A->>A: decide chamar GenerateCoupon
+    A-->>C: início da chamada
+    C->>U: mostra o loading ("Gerando seu cupom...")
+    A-->>C: resultado da ferramenta (JSON)
+    C->>U: loading vira done ("Cupom gerado")
+    C->>U: desenha o card (template, render ou mount)
+    A-->>C: texto da resposta
+    C->>U: mostra o texto, abaixo do card
 ```
 
 - A chave de `backendTools` é o **nome da ferramenta no servidor**, exatamente como o agente a declara (ex.: `GenerateCoupon`).
@@ -155,9 +158,18 @@ backendTools: {
 
 **Ciclo de um clique:**
 
-```
-idle ──clique──► pending ──retornou──► done   ($result = o que a ação retornou)
-                         └──lançou────► error  ($result.message = a mensagem do erro)
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> idle
+    idle --> pending: clique no botão
+    pending --> done: a ação retornou
+    pending --> error: a ação lançou um erro
+    done --> pending: novo clique
+    error --> pending: novo clique
+
+    note right of done: $result = o que a ação retornou
+    note right of error: $result.message = a mensagem do erro
 ```
 
 A cada mudança de estado, o template é redesenhado com os novos `{{$state}}` e `{{$result.*}}`, e o atributo `data-state` do container também muda. Assim, os estilos podem reagir sem JavaScript:

@@ -34,14 +34,25 @@ A divisão de responsabilidades é simples:
 <a id="conceitos"></a>
 ## 1. Conceitos
 
-```
-página: track('payment_declined', { method: 'card' })
-   │
-   ▼
-1. quais regras esperam esse evento?       (só elas são avaliadas)
-2. os limites delas permitem?              (oncePerSession, maxPerSession…)
-3. as condições batem?                     (lidas com o contexto da página NESTE momento)
-4. as ações rodam, em ordem                (open, tooltip, agentTurn)
+```mermaid
+flowchart TD
+    E["track('payment_declined', { method: 'card' })<br/>ou um silêncio que completou"] --> R{"Quais regras esperam<br/>esse evento?"}
+    R -- nenhuma --> N0(["nada acontece"])
+    R -- "para cada uma, na ordem da lista" --> L{"Os limites permitem?<br/>oncePerSession, maxPerSession,<br/>skipIfUserClosed"}
+    L -- não --> X1(["rule-matched: limited"])
+    L -- sim --> C{"As condições batem?<br/>event.*, context.* (lido agora), chat.*"}
+    C -- não --> X2(["ignorada, sem evento"])
+    C -- sim --> S{"Regras suprimidas?"}
+    S -- sim --> X3(["rule-matched: suppressed<br/>(o limite não é consumido)"])
+    S -- não --> A["Conta no limite e roda as ações, em ordem<br/>open · tooltip · agentTurn"]
+    A --> OK(["rule-matched: ran"])
+    A --> T{"stop: true?"}
+    T -- sim --> FIM(["as próximas regras deste evento<br/>não são avaliadas"])
+    T -- não --> NX
+    X1 --> NX
+    X2 --> NX
+    X3 --> NX
+    NX(["próxima regra da lista"]) --> L
 ```
 
 - **As regras são avaliadas quando um evento acontece**, nunca em um loop. "4 minutos parado" também é um evento: o próprio motor dispara quando o tempo passa (veja [`silence`](#when)).
