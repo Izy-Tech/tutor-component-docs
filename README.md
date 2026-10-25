@@ -8,6 +8,10 @@
 
 [Ir para Enviar momento atual](#getcurrentcontent)
 
+[Ferramentas do agente: cupons e outros resultados no chat (`backendTools`)](documentacao-ferramentas.md)
+
+[Motor de regras: abrir o chat, dicas e o agente puxando conversa (`rules`, `track`, `getContext`)](documentacao-regras.md)
+
 --- 
 
 # Documentação Customização
