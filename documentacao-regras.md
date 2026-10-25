@@ -39,7 +39,7 @@ flowchart TD
     R -- nenhuma --> N0(["nada acontece"])
     R -- "para cada uma, na ordem da lista" --> L{"Os limites permitem?<br/>oncePerSession, maxPerSession,<br/>skipIfUserClosed"}
     L -- não --> X1(["rule-matched: limited"])
-    L -- sim --> C{"As condições batem?<br/>event.*, context.* (lido agora), chat.*"}
+    L -- sim --> C{"As condições batem?<br/>event.*, chat.*"}
     C -- não --> X2(["ignorada, sem evento"])
     C -- sim --> S{"Regras suprimidas?"}
     S -- sim --> X3(["rule-matched: suppressed<br/>(o limite não é consumido)"])
@@ -187,7 +187,7 @@ Uma lista de condições, e **todas** precisam ser verdadeiras (E lógico). Sem 
 
 ```js
 if: [
-  { path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' },
+  { path: 'event.method', op: 'eq', value: 'card' },
   { path: 'chat.isOpen', op: 'eq', value: false },
 ]
 ```
@@ -197,23 +197,20 @@ if: [
 | Prefixo | O que é | Exemplo |
 |---|---|---|
 | `event.` | os dados do `track` que disparou a regra | `event.method`, `event.reason` |
-| `context.` | o [contexto da página](documentacao-contexto.md) **no momento do evento**, pela descrição | `context.Etapa do checkout` |
 | `chat.` | o estado do chat | `chat.isOpen`, `chat.isAnswering`, `chat.suppressed` |
-
-> Em `context.`, tudo depois do primeiro ponto é a descrição inteira. `context.Versão 2.0 do plano` lê a descrição `Versão 2.0 do plano`, com ponto e tudo.
 
 **Operadores:**
 
 | `op` | Verdadeiro quando | Exemplo |
 |---|---|---|
 | `eq` | igual (comparado como texto) | `{ path: 'event.method', op: 'eq', value: 'card' }` |
-| `neq` | diferente | `{ path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' }` |
+| `neq` | diferente | `{ path: 'event.method', op: 'neq', value: 'pix' }` |
 | `exists` | existe e não é vazio | `{ path: 'event.reason', op: 'exists' }` |
-| `gt` | maior que (comparado como número) | `{ path: 'context.Cartões recusados', op: 'gt', value: 1 }` |
-| `lt` | menor que | `{ path: 'context.Segundos sem interação', op: 'lt', value: 30 }` |
+| `gt` | maior que (comparado como número) | `{ path: 'event.attempt', op: 'gt', value: 1 }` |
+| `lt` | menor que | `{ path: 'event.secondsLeft', op: 'lt', value: 300 }` |
 
 - **`eq` e `neq` comparam como texto,** então `true`, `'true'`, `2` e `'2'` se comparam como esperado.
-- **`gt` e `lt` convertem para número.** Um valor do contexto como `'2'` funciona.
+- **`gt` e `lt` convertem para número.** Um valor como `'2'` funciona.
 
 <a id="then"></a>
 ### 4.3 `then`: as ações
@@ -245,7 +242,7 @@ Detalhes de cada uma em [Ações em detalhe](#acoes).
 
 ```js
 rules: [
-  { id: 'recusado-3x',  when: { event: 'payment_declined' }, if: [{ path: 'context.Cartões recusados', op: 'gt', value: 2 }],
+  { id: 'recusado-3x',  when: { event: 'payment_declined' }, if: [{ path: 'event.attempt', op: 'gt', value: 2 }],
     then: [{ action: 'agentTurn' }], stop: true },
   { id: 'recusado',     when: { event: 'payment_declined' }, then: [{ action: 'open' }] },
 ]
@@ -283,7 +280,7 @@ Mostra um texto no balão ao lado do botão do chat fechado, sem abrir o chat:
 <a id="acao-agentturn"></a>
 ### 5.3 `agentTurn`: o agente puxa conversa
 
-O agente envia uma mensagem **sem que o usuário tenha escrito nada**, baseada no contexto da página:
+O agente envia uma mensagem **sem que o usuário tenha escrito nada**:
 
 > *"Vi que o banco não autorizou o cartão — isso pode acontecer por limite ou segurança. Quer tentar pelo Pix, que é aprovado na hora?"*
 
@@ -307,13 +304,12 @@ O agente envia uma mensagem **sem que o usuário tenha escrito nada**, baseada n
 | Chat **aberto**, `ifOpen: 'skip'` | Nada acontece. |
 | Usuário abre o chat enquanto o agente "pensa" | Aparecem os três pontinhos de digitação, depois a mensagem. A saudação não pisca. |
 | Usuário tenta enviar mensagem durante o turno | O envio fica bloqueado até o agente terminar: **uma interação por vez**. |
-| O agente está respondendo ao usuário | O turno é **descartado**, não enfileirado. O agente já conhece a situação pelo contexto na próxima mensagem. |
+| O agente está respondendo ao usuário | O turno é **descartado**, não enfileirado. |
 | Outro turno já em andamento | O novo é descartado. |
 | O agente não produz texto (falha, sem resposta) | A saudação volta, e um chat fechado abre normalmente. |
 
 **Requisitos:**
 
-- **Contexto:** o agente responde a partir do [contexto da página](documentacao-contexto.md). Sem ele, o agente sabe apenas o nome do evento.
 - **Instruções do agente:** o agente precisa de instruções para "puxar conversa". Hoje o **`checkout-agent`** está preparado para isso. Outros agentes recebem o pedido, mas não têm essas instruções.
 
 ---
@@ -393,16 +389,6 @@ tutorChat.options = {
   isExternalProductId: false,
   getToken: obterToken,
 
-  // o contexto que o agente e as condições leem (veja documentacao-contexto.md)
-  getContext: () => ({
-    'Etapa do checkout': checkout.etapaLegivel(),          // "na etapa de pagamento", "compra concluída"…
-    'Forma de pagamento selecionada': checkout.metodo(),   // "cartão de crédito", "Pix", "boleto"
-    'Total': checkout.totalFormatado(),
-    'Tentativas de pagamento': checkout.resumoTentativas(),
-    'Cartões recusados': checkout.cartoesRecusados() || null,
-    'Pix': checkout.pix ? `gerado, expira às ${checkout.pix.expiraAs}, ainda não pago` : null,
-  }),
-
   rules: [
     {
       // cartão recusado: o agente oferece o Pix, mesmo com o chat aberto
@@ -425,10 +411,7 @@ tutorChat.options = {
       // 15s parado: uma dica discreta
       id: 'parado-dica',
       when: { silence: 15, of: ['activity'] },
-      if: [
-        { path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' },
-        { path: 'chat.isOpen', op: 'eq', value: false },
-      ],
+      if: [{ path: 'chat.isOpen', op: 'eq', value: false }],
       then: [{ action: 'tooltip', text: 'Posso ajudar?' }],
       limit: { oncePerSession: true, skipIfUserClosed: true },
     },
@@ -436,7 +419,6 @@ tutorChat.options = {
       // 30s parado: o agente puxa conversa, mas não interrompe quem já está no chat
       id: 'parado-conversa',
       when: { silence: 30, of: ['activity'] },
-      if: [{ path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' }],
       then: [{ action: 'agentTurn', ifOpen: 'skip' }],
       limit: { oncePerSession: true, skipIfUserClosed: true },
     },
@@ -452,8 +434,12 @@ async function pagar() {
   const liberar = tutorChat.suppressRules('processando-pagamento', { timeout: 30 });
   try {
     const r = await gateway.pagar();
-    if (r.aprovado) tutorChat.track('purchase_completed');
-    else tutorChat.track('payment_declined', { method: checkout.metodo(), reason: r.motivo });
+    if (r.aprovado) {
+      tutorChat.track('purchase_completed');
+      tutorChat.suppressRules('compra-concluida');   // comprou: o chat não age mais sozinho nesta página
+    } else {
+      tutorChat.track('payment_declined', { method: checkout.metodo(), reason: r.motivo, attempt: checkout.tentativas() });
+    }
   } finally {
     liberar();
   }
@@ -477,7 +463,6 @@ checkout.onPixGerado(() => tutorChat.track('pix_generated'));
 | `sessionStorage` bloqueado (modo privado restrito) | Os limites ficam só em memória e valem até recarregar a página. |
 | Regra com `id` repetido na lista | Vale a última. |
 | Erro em uma ação | Vai para o console. As outras ações da regra e as outras regras continuam. |
-| [Contexto da página](documentacao-contexto.md) ausente ou com erro durante uma condição | As condições recebem um contexto vazio: `eq`, `exists`, `gt` e `lt` falham, mas **`neq` passa** (vazio é diferente de qualquer valor). |
 | Evento informado antes de `options` | Fica na fila (até 50) e é avaliado quando as regras carregam. |
 | `track` com um nome que nenhuma regra usa | Nada acontece (custo quase zero). |
 | Usuário fechou o chat e uma regra tem `skipIfUserClosed` | A regra não roda mais nesta visita. Fechar pelo código (`close()`) não conta. |

@@ -85,6 +85,22 @@ getContext: async () => {
 
 Não é preciso avisar o chat quando algo muda: na próxima leitura, `getContext` já devolve o estado novo.
 
+### Lendo o contexto nas condições das regras
+
+Uma condição lê um item do contexto com `context.` seguido da **descrição inteira**:
+
+```js
+if: [
+  { path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' },
+  { path: 'context.Cartões recusados', op: 'gt', value: 1 },
+]
+```
+
+- **Tudo depois de `context.` é a descrição,** inclusive pontos: `context.Versão 2.0 do plano` lê a descrição `Versão 2.0 do plano`.
+- **Sem o item, ou sem `getContext`,** o valor é vazio: `eq`, `exists`, `gt` e `lt` falham, mas `neq` passa (vazio é diferente de qualquer valor).
+
+Os operadores e o resto da anatomia de uma regra estão no [Motor de regras](documentacao-regras.md#if).
+
 ---
 
 <a id="bom-contexto"></a>
