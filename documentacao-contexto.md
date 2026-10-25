@@ -4,6 +4,8 @@ O agente só sabe o que o usuário escreve. Se o comprador digita *"não deu, e 
 
 `getContext` é a função em que a página descreve **onde o usuário está e o que aconteceu**. O chat a chama a cada interação e envia o resultado junto, para que o agente responda à situação real sem que o usuário precise explicá-la.
 
+> **Este documento trata do contexto como informação para o agente (o LLM no servidor).** O mesmo `getContext` também pode ser lido pelas condições do [motor de regras](documentacao-regras.md) (`context.*`), para saber o estado da página. Quando usar isso está em [`event.*` ou `context.*`?](documentacao-regras.md#event-ou-context).
+
 ```mermaid
 sequenceDiagram
     actor U as Comprador
@@ -85,21 +87,7 @@ getContext: async () => {
 
 Não é preciso avisar o chat quando algo muda: na próxima leitura, `getContext` já devolve o estado novo.
 
-### Lendo o contexto nas condições das regras
-
-Uma condição lê um item do contexto com `context.` seguido da **descrição inteira**:
-
-```js
-if: [
-  { path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' },
-  { path: 'context.Cartões recusados', op: 'gt', value: 1 },
-]
-```
-
-- **Tudo depois de `context.` é a descrição,** inclusive pontos: `context.Versão 2.0 do plano` lê a descrição `Versão 2.0 do plano`.
-- **Sem o item, ou sem `getContext`,** o valor é vazio: `eq`, `exists`, `gt` e `lt` falham, mas `neq` passa (vazio é diferente de qualquer valor).
-
-Os operadores e o resto da anatomia de uma regra estão no [Motor de regras](documentacao-regras.md#if).
+> As regras leem o contexto pela **descrição** (`context.Etapa do checkout`). Se uma descrição for usada em alguma regra, mudar o texto dela quebra a condição. Veja [`event.*` ou `context.*`?](documentacao-regras.md#event-ou-context).
 
 ---
 

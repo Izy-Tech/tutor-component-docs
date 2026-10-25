@@ -15,7 +15,7 @@ A divisão de responsabilidades é simples:
 3. [Informando eventos: `track`](#track)
 4. [Anatomia de uma regra](#anatomia)
    - [`when`: o gatilho](#when)
-   - [`if`: as condições](#if)
+   - [`if`: as condições](#if) · [`event.*` ou `context.*`?](#event-ou-context)
    - [`then`: as ações](#then)
    - [`limit`, `stop` e `enabled`](#limit)
 5. [Ações em detalhe](#acoes)
@@ -39,7 +39,7 @@ flowchart TD
     R -- nenhuma --> N0(["nada acontece"])
     R -- "para cada uma, na ordem da lista" --> L{"Os limites permitem?<br/>oncePerSession, maxPerSession,<br/>skipIfUserClosed"}
     L -- não --> X1(["rule-matched: limited"])
-    L -- sim --> C{"As condições batem?<br/>event.*, chat.*"}
+    L -- sim --> C{"As condições batem?<br/>event.*, context.* (lido agora), chat.*"}
     C -- não --> X2(["ignorada, sem evento"])
     C -- sim --> S{"Regras suprimidas?"}
     S -- sim --> X3(["rule-matched: suppressed<br/>(o limite não é consumido)"])
@@ -197,7 +197,25 @@ if: [
 | Prefixo | O que é | Exemplo |
 |---|---|---|
 | `event.` | os dados do `track` que disparou a regra | `event.method`, `event.reason` |
+| `context.` | o estado da página: o resultado de [`getContext`](documentacao-contexto.md) **no momento do evento**, pela descrição | `context.Etapa do checkout` |
 | `chat.` | o estado do chat | `chat.isOpen`, `chat.isAnswering`, `chat.suppressed` |
+
+<a id="event-ou-context"></a>
+#### `event.*` ou `context.*`?
+
+As duas leem dados da página, mas respondem a perguntas diferentes:
+
+| Use | Quando a condição pergunta… | Exemplo |
+|---|---|---|
+| `event.*` | **o que aconteceu** neste evento | "o pagamento recusado era de cartão?" → `event.method eq card` |
+| `context.*` | **em que estado a página está** agora, independentemente do evento | "o comprador ainda não concluiu a compra?" → `context.Etapa do checkout neq compra concluída` |
+
+- **Regras de silêncio só podem usar `context.*` (e `chat.*`):** um silêncio não vem de um `track`, então não tem `event.*`. Para "só puxar conversa se ainda não comprou", o estado da página é a única fonte.
+- **Para regras por evento, prefira `event.*`** quando o dado é do próprio acontecimento (`method`, `reason`, `attempt`). O dado chega junto com o evento e não depende de o contexto estar atualizado.
+- **`context.*` lê o mesmo `getContext` que o agente recebe.** As descrições são escritas para o agente ler, e as condições dependem delas: **mudar o texto de uma descrição quebra as condições** que a usam. Mantenha as descrições estáveis.
+- **Tudo depois de `context.` é a descrição inteira,** inclusive pontos: `context.Versão 2.0 do plano` lê a descrição `Versão 2.0 do plano`.
+- **O contexto só é lido se alguma regra do evento tiver condições,** e uma vez por evento: todas as condições veem o mesmo instante.
+- **Sem `getContext`, ou se ele falhar,** os valores de `context.*` ficam vazios: `eq`, `exists`, `gt` e `lt` falham, mas **`neq` passa** (vazio é diferente de qualquer valor).
 
 **Operadores:**
 
@@ -310,6 +328,7 @@ O agente envia uma mensagem **sem que o usuário tenha escrito nada**:
 
 **Requisitos:**
 
+- **Contexto para o agente:** o que o agente fala vem do que a página envia a ele em [`getContext`](documentacao-contexto.md). Sem isso, ele sabe apenas o nome do evento e da regra.
 - **Instruções do agente:** o agente precisa de instruções para "puxar conversa". Hoje o **`checkout-agent`** está preparado para isso. Outros agentes recebem o pedido, mas não têm essas instruções.
 
 ---
@@ -389,6 +408,14 @@ tutorChat.options = {
   isExternalProductId: false,
   getToken: obterToken,
 
+  // o mesmo contexto que o agente recebe (veja documentacao-contexto.md);
+  // aqui as regras de silêncio usam 'Etapa do checkout' para não incomodar quem já comprou
+  getContext: () => ({
+    'Etapa do checkout': checkout.etapaLegivel(),          // "na etapa de pagamento", "compra concluída"…
+    'Forma de pagamento selecionada': checkout.metodoLegivel(),
+    'Tentativas de pagamento': checkout.tentativasLegiveis(),
+  }),
+
   rules: [
     {
       // cartão recusado: o agente oferece o Pix, mesmo com o chat aberto
@@ -411,7 +438,10 @@ tutorChat.options = {
       // 15s parado: uma dica discreta
       id: 'parado-dica',
       when: { silence: 15, of: ['activity'] },
-      if: [{ path: 'chat.isOpen', op: 'eq', value: false }],
+      if: [
+        { path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' },   // silêncio: só o estado da página
+        { path: 'chat.isOpen', op: 'eq', value: false },
+      ],
       then: [{ action: 'tooltip', text: 'Posso ajudar?' }],
       limit: { oncePerSession: true, skipIfUserClosed: true },
     },
@@ -419,6 +449,7 @@ tutorChat.options = {
       // 30s parado: o agente puxa conversa, mas não interrompe quem já está no chat
       id: 'parado-conversa',
       when: { silence: 30, of: ['activity'] },
+      if: [{ path: 'context.Etapa do checkout', op: 'neq', value: 'compra concluída' }],
       then: [{ action: 'agentTurn', ifOpen: 'skip' }],
       limit: { oncePerSession: true, skipIfUserClosed: true },
     },
@@ -436,7 +467,6 @@ async function pagar() {
     const r = await gateway.pagar();
     if (r.aprovado) {
       tutorChat.track('purchase_completed');
-      tutorChat.suppressRules('compra-concluida');   // comprou: o chat não age mais sozinho nesta página
     } else {
       tutorChat.track('payment_declined', { method: checkout.metodo(), reason: r.motivo, attempt: checkout.tentativas() });
     }
