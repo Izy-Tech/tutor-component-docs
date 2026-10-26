@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>&lt;my-element> Demo</title>
+  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="node_modules/lit/polyfill-support.js"></script>
+  <script type="module" src="dist/tutor-chat.js"></script>
+
+  <style>
+    .chat {
+      position: fixed;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+  <tutor-chat class="chat" id="tutor-chat"></tutor-chat>
+</body>
+
+<script type="module">
+  document.addEventListener("DOMContentLoaded", function () {
+
+    const tutorChat = document.getElementById('tutor-chat');
+
+    tutorChat.options = {
+      organizationId: "org-123",
+      productId: "prod-123",
+      getToken: getConsumerToken,
+      startOpened: false,
+      // Idioma preferido do usuário logado, como a plataforma já o conhece.
+      // Sem ele, o chat fica em pt-BR.
+      language: getUserLanguage()
+    };
+  });
+
+  function getUserLanguage() {
+    // Use o idioma que a sua plataforma guarda para o usuário logado,
+    // por exemplo: 'pt-BR', 'en-US' ou 'es-ES'.
+    // return usuarioLogado.idioma;
+
+    // Sem essa informação, o idioma do navegador é uma alternativa.
+    return navigator.language || 'pt-BR';
+  }
+
+  async function getConsumerToken() {
+    const tokenResponse = await fetch("/api/token").then(r => r.json());
+    return tokenResponse.access_token;
+  }
+</script>
+
+
+</html>

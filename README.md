@@ -8,6 +8,8 @@
 
 [Ir para Enviar momento atual](#getcurrentcontent)
 
+[Idiomas: o chat no idioma do usuário (`language`)](documentacao-customizacao.md#idiomas)
+
 [Ferramentas do agente: cupons e outros resultados no chat (`backendTools`)](documentacao-ferramentas.md)
 
 [Contexto da página: o que a página conta ao agente a cada mensagem (`getContext`)](documentacao-contexto.md)

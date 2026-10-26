@@ -1182,6 +1182,47 @@ Resultado:
 
 
 --- 
+<a id="idiomas"></a>
+## Idiomas
+
+O chat atende o usuário no idioma dele, sem que ele precise pedir. A plataforma já sabe o idioma do usuário logado e o informa ao componente na opção `language`, do mesmo jeito que já informa o token.
+
+### Como funciona
+
+- **Idioma preferido:** vem da plataforma, na opção `language` (por exemplo, `'en-US'` ou `'es-ES'`). Não há seletor de idioma no chat.
+- **Resposta no idioma da mensagem:** o assistente responde no idioma em que o usuário escreveu. Se ele perguntar em inglês, a resposta vem em inglês; em espanhol, em espanhol; o mesmo vale para outros idiomas.
+- **Quando a mensagem não deixa claro:** em saudações e mensagens curtas ou ambíguas ("oi", "ok", um nome), o assistente usa o idioma preferido.
+- **Sem `language`:** tudo continua em português (`pt-BR`), como antes.
+- O conteúdo do produto (vídeos e documentos) não é traduzido: o assistente responde no idioma do usuário usando o conteúdo como ele está.
+
+### O que muda com o idioma preferido
+
+| | Português | Inglês | Espanhol | Outros idiomas |
+|---|---|---|---|---|
+| Resposta do assistente | ✔ | ✔ | ✔ | ✔ (idioma da mensagem) |
+| Saudação inicial e mensagens de erro | ✔ | ✔ | ✔ | Português |
+| Textos do chat (placeholder, tooltip, feedback, referências, avisos) | ✔ | ✔ | ✔ | Português |
+| Microfone (reconhecimento de voz) | ✔ | ✔ | ✔ | ✔ (conforme o navegador) |
+
+O idioma vale por região: `'en-US'` e `'en-GB'` usam os textos em inglês; `'es-ES'` e `'es-MX'`, em espanhol. O microfone usa o valor informado como está, então prefira o código completo (`'en-US'`), que é o que os navegadores reconhecem melhor.
+
+Textos que você definiu no tema (por exemplo, o placeholder em `textInput` ou o texto do tooltip em `closed.tooltip`) continuam valendo em qualquer idioma. Para traduzi-los também, defina o tema conforme o idioma do usuário ou deixe esses textos sem definir, para que o chat use os do idioma informado.
+
+### Código
+
+```js
+    tutorChat.options = {  
+      organizationId: "4f0983fc-055c-44be-bafe-0f2d9e937f0b",  
+      productId: "9206CEBB-17F0-5CFE-84A3-0C9B212FE1C8",  
+      isExternalProductId: false,  
+      getToken: getConsumerToken,  
+      language: usuarioLogado.idioma // por exemplo, 'en-US'  
+    };
+```
+
+Veja o exemplo completo em [`language-example.html`](language-example.html).
+
+--- 
 <a id="navegacao"></a>
 # Documentação — Navegação de Vídeo e Texto (videoNavigation / textNavigation)
 
